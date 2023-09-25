@@ -1,24 +1,21 @@
 
 import React from 'react';
-import { nanoid } from 'nanoid';
+import Notiflix from 'notiflix';
 import { Form, Label, Button, Input} from './ContactForm.styled';
-import { useState } from 'react';
-// Импортируем хук
-import { useDispatch } from "react-redux";
-// Импортируем генератор экшена
-import { addTask } from "../../redux/actions";
 
-const INITIAL_STATE = {
-    name: '',
-    number: '',
-};
+// Импортируем хук
+import { useDispatch,useSelector } from "react-redux";
+// Импортируем генератор экшена
+import { addContacts } from "../../redux/contactsSlice";
+import { getContacts} from "../../redux/selectors";
+
 
 
 export const ContactForm = () => { 
 
    // Получаем ссылку на функцию отправки экшенов
   const dispatch = useDispatch();
-
+const contacts = useSelector(getContacts);
 
 
     
@@ -26,10 +23,21 @@ export const ContactForm = () => {
         event.preventDefault();
       const form = event.target;
 
-        console.dir(form.elements);
+        
     // Вызываем генератор экшена и передаем текст задачи для поля payload
-    // Отправляем результат - экшен создания задачи
-    dispatch(addTask(form.elements.text.value));
+        // Отправляем результат - экшен создания задачи
+        
+        const newContact = {
+            name:form.elements.name.value,
+            number:form.elements.number.value
+        }
+    const {name} = newContact;
+     if (contacts.find(newContact => newContact.name.toLowerCase() === name.toLowerCase())) {
+      Notiflix.Notify.failure(`${newContact.name} is already in contacts`);
+    }
+else{ dispatch(addContacts(newContact));}
+
+   
 
      form.reset();
     }
@@ -50,10 +58,10 @@ return (
                     title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
                     required
                     /></Label>
-{/*                 
-                <Label>
-                    Number
-               <Input
+               
+           <Label>
+             Number
+           <Input
                type="tel"
                name="number"
             //    value={state.number}
@@ -62,7 +70,7 @@ return (
                title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
                required
                     />
-                </Label> */}
+                </Label>
 
 
                 <Button type="submit">Add contact</Button>

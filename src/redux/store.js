@@ -1,24 +1,36 @@
-import { createStore } from "redux";
-import { devToolsEnhancer } from "@redux-devtools/extension";
 
-// Начальное значение состояния Redux для корневого редюсера,
-// если не передать параметр preloadedState.
-const initialState = {
-  tasks: [
-    { "id": "id-1", "name": "Rosie Simpson", "number": "459-12-56" },
-    { "id": "id-2", "name": "Hermione Kline", "number": "443-89-12" },
-    { "id": "id-3", "name": "Eden Clements", "number": "645-17-79" },
-    { "id": "id-4", "name": "Annie Copeland", "number": "227-91-26" }
-  ],
-  filter: ''
-};
+import { configureStore } from "@reduxjs/toolkit";
+import { reducerContacts } from "./contactsSlice";
+import { filtersReducer } from "./filterSlice";
+import { persistStore} from 'redux-persist'
+import {
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+// // Создаем расширение стора чтобы добавить инструменты разработчика
+// const enhancer = devToolsEnhancer();
 
-// Пока что используем редюсер который
-// только возвращает полученное состояние
-const rootReducer = (state = initialState, action) => {
-  return state;
-};
-// Создаем расширение стора чтобы добавить инструменты разработчика
-const enhancer = devToolsEnhancer();
+// export const store = createStore(rootReducer, enhancer);
 
-export const store = createStore(rootReducer,enhancer);
+
+export const store = configureStore({
+  reducer: {
+    contacts: reducerContacts,
+    filter: filtersReducer,
+  },
+  
+   middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }),
+
+});
+
+ export const persistor = persistStore(store)
+
