@@ -34,4 +34,13 @@ export const Button = styled.button`
   border: 3px ;
 
   font-size: 18px;
+
+&:hover,
+  &:focus {
+
+    background-color: #e2e5e8;
+  }
+
+
+
 `;
