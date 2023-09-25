@@ -22,7 +22,7 @@ export const store = configureStore({
     contacts: reducerContacts,
     filter: filtersReducer,
   },
-  
+
    middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
       serializableCheck: {
